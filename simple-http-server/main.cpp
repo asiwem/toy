@@ -168,26 +168,6 @@ public:
 		return true;
 	}
 
-	size_t search_end_of_http_headers() const
-	{
-		int seq = 0;
-
-		for (size_t i = 0; i != rx; i++) {
-			switch (rxbuf[i]) {
-			default:
-				seq = 0;
-				continue;
-
-			case '\r':
-			case '\n':
-				if (++seq == 4)
-					return i+1;
-			}
-		}
-
-		return 0;
-	}
-
 	void discard(size_t sz)
 	{
 		if (sz == rx) {
@@ -641,7 +621,7 @@ static void dirs_to_text(const std::vector<fs_entry> &v, std::string &s, std::st
 	}
 }
 
-static size_t find_eoh(std::string_view v)
+static size_t find_http_eoh(std::string_view v)
 {
 	int seq = 0;
 
@@ -681,7 +661,7 @@ static constexpr bool (*endpoints_post[])(const request &, response &) = {
 				.append(" bytes\n");
 
 		for (auto v : req.parts) {
-			auto idx = find_eoh(v);
+			auto idx = find_http_eoh(v);
 			if (!idx) {
 				res.body = "Bad request";
 				res.headers[http::header::CONTENT_TYPE] = "text/plain; charset=utf-8";
@@ -874,7 +854,7 @@ static bool serve_request(connection &con, std::string_view peername)
 	size_t eoh = 0;
 
 	for (;;) {
-		eoh = con.search_end_of_http_headers();
+		eoh = find_http_eoh(std::string_view{con.rxbuf, con.rx});
 		if (eoh)
 			break;
 
@@ -944,8 +924,6 @@ static bool serve_request(connection &con, std::string_view peername)
 			req.parts = std::move(parts);
 		}
 	}
-
-	/* BUILD RESPONSE */
 
 	struct response res;
 	res.headers[http::header::CONTENT_TYPE] = "application/octet-stream";
