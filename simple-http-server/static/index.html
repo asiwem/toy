@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Index page</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+	<body>
+		<h1>Upload files</h1>
+
+		<form action="/upload" method="post" enctype="multipart/form-data">
+			<input type="file" name="attachments" multiple>
+			<input type="submit">
+		</form>
+
+		<ul>
+			<li>List files <a href="/list">GET /list</a></li>
+			<li>Access a file via GET /file/[name]</li>
+			<li>View your client address <a href="/me">GET /me</a></li>
+			<li>API demo <a href="/add/11/30">GET /add/11/30</a></li>
+		</ul>
+
+		<div>NOTE! File numbering is not persistent</div>
+	</body>
+</html>
