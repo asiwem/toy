@@ -1,15 +1,19 @@
 CXXSOURCES		= main.cpp
 CXXFLAGS		= -std=c++17 -Wall -Wextra -Wpedantic
 LDFLAGS			= -pthread
+DIRS			= static/upload
 
-debug:
+debug: $(DIRS)
 	$(CXX) $(CXXSOURCES) -o bin $(CXXFLAGS) $(LDFLAGS) -g -fsanitize=address,undefined
 
-analyze:
+analyze: $(DIRS)
 	$(CXX) $(CXXSOURCES) -o bin $(CXXFLAGS) $(LDFLAGS) -g -fsanitize=address,undefined -fanalyzer
 
-release:
+release: $(DIRS)
 	$(CXX) $(CXXSOURCES) -o bin $(CXXFLAGS) $(LDFLAGS) -O2
+
+$(DIRS):
+	mkdir -p $@
 
 clean:
 	rm -f logs/* static/upload/*

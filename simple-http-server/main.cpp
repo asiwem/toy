@@ -1057,6 +1057,9 @@ int main()
 	addr.sin6_family = AF_INET6;
 	addr.sin6_port = htons(config::port);
 
+	std::cout << "info: clearing static/upload folder...\n";
+	system("rm -f static/upload/*");
+
 	const int listenfd = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
 	if (listenfd < 0) {
 		std::fprintf(stderr, "fail: socket errno=%d\n", errno);
